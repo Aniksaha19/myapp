@@ -23,25 +23,68 @@ const SignInSignUp = () => {
         }
     })
     const handleClick=()=> {
-        if(name.current.value && email.current.value && password.current.value)
-       {
-        localStorage.setItem("name",name.current.value)
-        localStorage.setItem("email",email.current.value)
-        localStorage.setItem("password",password.current.value)
-        localStorage.setItem("signUp",email.current.value)
-        alert("Account created successfully")
-        window.location.reload()
-       }
+        if(name.current.value && email.current.value && password.current.value) {
+            fetch('/signup', {
+                method: 'POST',
+                body:JSON.stringify({
+                    name:name.current.value,
+                    email:email.current.value,
+                    password:password.current.value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                const csrfToken = response.headers.get('csrf-token');
+
+                const jwtToken = response.headers.get('jwt-token');
+
+                localStorage.setItem('name', name.current.value);
+                localStorage.setItem('email', email.current.value);
+                localStorage.setItem('password', password.current.value);
+                localStorage.setItem('signUp', email.current.value);
+                localStorage.setItem('csrfToken', csrfToken);
+                localStorage.setItem('jwtToken', jwtToken);
+
+                alert('Account created successfully');
+                window.location.reload();
+            })
+            .catch((error)=> {
+                console.error('Error:', error);
+            });
+        }   
     }
 
     const handleSignIn=()=> {
         if(email.current.value==localEmail && password.current.value==localpassword){
-            localStorage.setItem("signUp",email.current.value)
-            window.location.reload()
+            fetch('/signin', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: email.current.value,
+                    password: password.current.value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response)=> {
+                const csrfToken = response.headers.get('csrf-token');
+                const jwtToken = response.headers.get('jwt-token');
+
+                localStorage.setItem("signUp",email.current.value);
+                localStorage.setItem("csrfToken", csrfToken);
+                localStorage.setItem("jwtToken", jwtToken);
+
+                window.location.reload()
+            })
+            .catch((error)=> {
+                console.log('Error', error)
+            });         
         } else {
             alert("Please Enter valid credential")
         }
-    }
+    };
 
     return (
         <div>
@@ -55,7 +98,7 @@ const SignInSignUp = () => {
                 <div className='input_space'>
                     <input placeholder='password' type='password' ref={password}/>
                 </div>
-                <button onClick={handleSignIn}>sign up</button>
+                <button onClick={handleSignIn}>Sign In</button>
             </div>
             : 
             <div className='container'>
@@ -68,7 +111,7 @@ const SignInSignUp = () => {
                 <div className='input_space'>
                     <input placeholder='password' type='password' ref={password}/>
                 </div>
-                <button onClick={handleClick}>sign up</button>
+                <button onClick={handleClick}>Sign Up</button>
             </div>)
             }
         </div>
