@@ -1,8 +1,12 @@
 *{
-    text-align: center;
+    text-align: center;    
 }
 .container{
     margin-top: 100px;
+}
+.captcha {
+    text-align: center;
+    
 }
 .input_space{
     margin-bottom: 10px;

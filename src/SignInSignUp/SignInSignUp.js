@@ -1,6 +1,7 @@
 import React, {useRef, useEffect, useState} from 'react';
 import Home from './Home';
 import './SignInSignUp.css';
+import GoogleCaptcha from '../GoogleCaptcha';
 
 const SignInSignUp = () => {
     const name=useRef()
@@ -9,10 +10,11 @@ const SignInSignUp = () => {
     const [showHome, setShowHome] = useState(false)
     const [showEmail, setShowEmail] = useState(false)
 
-    const localSignUp= localStorage.getItem("signUp")
-    const localEmail= localStorage.getItem("email")
-    const localpassword = localStorage.getItem("password")
-    const localName = localStorage.getItem("name")
+    const localSignUp= sessionStorage.getItem("signUp")
+    const localEmail= sessionStorage.getItem("email")
+    const localpassword = sessionStorage.getItem("password")
+    const localName = sessionStorage.getItem("name")
+
 
     useEffect(()=> {
         if(localSignUp){
@@ -22,6 +24,7 @@ const SignInSignUp = () => {
             setShowEmail(true)
         }
     })
+   
     const handleClick=()=> {
         if(name.current.value && email.current.value && password.current.value) {
             fetch('/signup', {
@@ -37,15 +40,14 @@ const SignInSignUp = () => {
             })
             .then((response) => {
                 const csrfToken = response.headers.get('csrf-token');
-
                 const jwtToken = response.headers.get('jwt-token');
 
-                localStorage.setItem('name', name.current.value);
-                localStorage.setItem('email', email.current.value);
-                localStorage.setItem('password', password.current.value);
-                localStorage.setItem('signUp', email.current.value);
-                localStorage.setItem('csrfToken', csrfToken);
-                localStorage.setItem('jwtToken', jwtToken);
+                sessionStorage.setItem('name', name.current.value);
+                sessionStorage.setItem('email', email.current.value);
+                sessionStorage.setItem('password', password.current.value);
+                sessionStorage.setItem('signUp', email.current.value);
+                sessionStorage.setItem('csrfToken', csrfToken);
+                sessionStorage.setItem('jwtToken', jwtToken);
 
                 alert('Account created successfully');
                 window.location.reload();
@@ -54,7 +56,7 @@ const SignInSignUp = () => {
                 console.error('Error:', error);
             });
         }   
-    }
+    }   
 
     const handleSignIn=()=> {
         if(email.current.value==localEmail && password.current.value==localpassword){
@@ -72,9 +74,9 @@ const SignInSignUp = () => {
                 const csrfToken = response.headers.get('csrf-token');
                 const jwtToken = response.headers.get('jwt-token');
 
-                localStorage.setItem("signUp",email.current.value);
-                localStorage.setItem("csrfToken", csrfToken);
-                localStorage.setItem("jwtToken", jwtToken);
+                sessionStorage.setItem("signUp",email.current.value);
+                sessionStorage.setItem("csrfToken", csrfToken);
+                sessionStorage.setItem("jwtToken", jwtToken);
 
                 window.location.reload()
             })
@@ -96,7 +98,7 @@ const SignInSignUp = () => {
                     <input placeholder='email' type='text' ref={email}/>
                 </div>
                 <div className='input_space'>
-                    <input placeholder='password' type='password' ref={password}/>
+                    <input placeholder='password' type='password' ref={password}/>           
                 </div>
                 <button onClick={handleSignIn}>Sign In</button>
             </div>

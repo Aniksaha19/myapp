@@ -2,11 +2,11 @@ import React from 'react';
 import './SignInSignUp.css';
 
     const logout =()=> {
-        localStorage.removeItem("signUp")
+        sessionStorage.removeItem("signUp")
         window.location.reload()
     }
     const deleteAccount =()=> {
-        localStorage.clear()
+        sessionStorage.clear()
         window.location.reload()
     }
 
